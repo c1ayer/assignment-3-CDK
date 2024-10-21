@@ -1,0 +1,230 @@
+{
+ "Resources": {
+  "InstanceSSMCBFA3CF0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "ec2.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonSSMManagedInstanceCore"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/InstanceSSM/Resource"
+   }
+  },
+  "WebSG93294D3E": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "ServerStack/WebSG",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "SecurityGroupIngress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow HTTP traffic",
+      "FromPort": 80,
+      "IpProtocol": "tcp",
+      "ToPort": 80
+     }
+    ],
+    "VpcId": {
+     "Fn::ImportValue": "NetworkStack:ExportsOutputRefMyVpcF9F0CA6FBC8737E9"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/WebSG/Resource"
+   }
+  },
+  "WebInstance1InstanceProfile545A5644": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "InstanceSSMCBFA3CF0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/WebInstance1/InstanceProfile"
+   }
+  },
+  "WebInstance15352D618": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "IamInstanceProfile": {
+     "Ref": "WebInstance1InstanceProfile545A5644"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamznamihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "t2.micro",
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "WebSG93294D3E",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Fn::ImportValue": "NetworkStack:ExportsOutputRefMyVpcPublicSubnetSubnet1Subnet60D1320D07CD3AA8"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "ServerStack/WebInstance1"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": "#!/bin/bash"
+    }
+   },
+   "DependsOn": [
+    "InstanceSSMCBFA3CF0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/WebInstance1/Resource"
+   }
+  },
+  "WebInstance2InstanceProfile3CFA47FA": {
+   "Type": "AWS::IAM::InstanceProfile",
+   "Properties": {
+    "Roles": [
+     {
+      "Ref": "InstanceSSMCBFA3CF0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/WebInstance2/InstanceProfile"
+   }
+  },
+  "WebInstance2BA3251FF": {
+   "Type": "AWS::EC2::Instance",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "IamInstanceProfile": {
+     "Ref": "WebInstance2InstanceProfile3CFA47FA"
+    },
+    "ImageId": {
+     "Ref": "SsmParameterValueawsserviceamiamazonlinuxlatestamznamihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter"
+    },
+    "InstanceType": "t2.micro",
+    "SecurityGroupIds": [
+     {
+      "Fn::GetAtt": [
+       "WebSG93294D3E",
+       "GroupId"
+      ]
+     }
+    ],
+    "SubnetId": {
+     "Fn::ImportValue": "NetworkStack:ExportsOutputRefMyVpcPublicSubnetSubnet2Subnet122ADB1BBA7F79F4"
+    },
+    "Tags": [
+     {
+      "Key": "Name",
+      "Value": "ServerStack/WebInstance2"
+     }
+    ],
+    "UserData": {
+     "Fn::Base64": "#!/bin/bash"
+    }
+   },
+   "DependsOn": [
+    "InstanceSSMCBFA3CF0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/WebInstance2/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WNTQrCMBCFz9J9OpIKgmsX4q60B5AxTnFsm5RJQikhdxetBV09+N5fBfpQgS5w9qW59+XAN0htQNMrnP01MY6QGjeQOnV204v1Aa2hWlzHA2VFpoLUkonCYTmLi9M79g+20u9Azqoh76KsuEbBkQLJ5+xrZFUv4eHsbg9aw7F4euZSog08EjSrvgCtuakpxgAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "ServerStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "SsmParameterValueawsserviceamiamazonlinuxlatestamznamihvmx8664gp2C96584B6F00A464EAD1953AFF4B05118Parameter": {
+   "Type": "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>",
+   "Default": "/aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2"
+  },
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Outputs": {
+  "ExportsOutputFnGetAttWebSG93294D3EGroupIdA4F57E2C": {
+   "Value": {
+    "Fn::GetAtt": [
+     "WebSG93294D3E",
+     "GroupId"
+    ]
+   },
+   "Export": {
+    "Name": "ServerStack:ExportsOutputFnGetAttWebSG93294D3EGroupIdA4F57E2C"
+   }
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

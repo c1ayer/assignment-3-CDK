@@ -1,0 +1,20 @@
+{
+  "version": "38.0.1",
+  "files": {
+    "a879c0fee344b2f49f19dfb6ae1325f820dd4fce5bf9611766b224414fa13674": {
+      "source": {
+        "path": "RDSStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "911167900137-us-east-1": {
+          "bucketName": "cdk-hnb659fds-assets-911167900137-us-east-1",
+          "objectKey": "a879c0fee344b2f49f19dfb6ae1325f820dd4fce5bf9611766b224414fa13674.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::911167900137:role/cdk-hnb659fds-file-publishing-role-911167900137-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}
